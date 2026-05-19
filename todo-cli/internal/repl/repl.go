@@ -61,6 +61,16 @@ func handleToggle(args []string) {
 		fmt.Println("Failed to mark todo:", err)
 		return
 	}
+
+	fmt.Println("Todo toggled successfully")
+}
+
+func handleSave() {
+	if err := storage.SaveTodo(); err != nil {
+		fmt.Println("Failed to save")
+	} else {
+		fmt.Println("Saved successfully")
+	}
 }
 
 func handleDelete(args []string) {
@@ -91,6 +101,11 @@ func handleDelete(args []string) {
 func StartRepl() {
 	scanner := bufio.NewScanner(os.Stdin)
 
+	if err := storage.LoadTodo(); err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	for {
 		fmt.Print("[todo]> ")
 
@@ -115,7 +130,10 @@ func StartRepl() {
 			handleToggle(args)
 		case "delete":
 			handleDelete(args)
+		case "save":
+			handleSave()
 		case "exit":
+			storage.SaveTodo()
 			os.Exit(0)
 		default:
 			fmt.Println("Invalid command")
