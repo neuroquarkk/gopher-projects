@@ -1,0 +1,28 @@
+services:
+  server:
+    build: .
+    ports:
+      - "${PORT}:8080"
+    env_file: .env
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+    depends_on:
+      postgres:
+        condition: service_started
+
+  postgres:
+    image: postgres:16.10-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mtt_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
